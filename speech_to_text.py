@@ -1,3 +1,5 @@
+from typing import List
+
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import cloud_speech
 
@@ -11,11 +13,20 @@ recognition_config = cloud_speech.RecognitionConfig(
 )
 
 
-def transcribe_streaming_chunk(audio: bytes) -> cloud_speech.RecognizeResponse:
+def transcribe_file(audio: bytes) -> List[str]:
     request = cloud_speech.RecognizeRequest(
         recognizer=f"projects/{project_id}/locations/global/recognizers/_",
         config=recognition_config,
         content=audio,
     )
     response = client.recognize(request=request)
-    return response
+    commands = []
+    for result in response.results:
+        commands += keyword_spotting(result.alternatives[0].transcript)
+    return commands
+
+
+def keyword_spotting(text: str) -> List[str]:
+    keywords = {"up", "down", "left", "right"}
+    found_commands = [keyword for keyword in keywords if keyword in text.lower()]
+    return found_commands
