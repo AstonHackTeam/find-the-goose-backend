@@ -10,7 +10,8 @@ recognition_config = cloud_speech.RecognitionConfig(
     model="long",
 )
 
-def transcribe_streaming_chunk(audio: bytes):
+
+def transcribe_streaming_chunk(audio: bytes) -> cloud_speech.RecognizeResponse:
     request = cloud_speech.RecognizeRequest(
         recognizer=f"projects/{project_id}/locations/global/recognizers/_",
         config=recognition_config,

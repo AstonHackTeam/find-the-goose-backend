@@ -12,7 +12,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     buffer = b""
-    buffer_size_threshold = 1024
+    buffer_size_threshold = 1024 * 30
 
     try:
         while True:
