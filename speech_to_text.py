@@ -2,16 +2,24 @@ from typing import List
 
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import cloud_speech
+import whisper
 
+model = whisper.load_model("base")
 client = SpeechClient()
 
-project_id = "find-the-goose"
+project_id = "civil-tube-405901"
 recognition_config = cloud_speech.RecognitionConfig(
     auto_decoding_config=cloud_speech.AutoDetectDecodingConfig(),
     language_codes=["en-US"],
-    model="long",
+    model="short",
 )
 
+def transcribe_file_whisper(file_path)->List[str]:
+    file_path_str = str(file_path)
+    print(file_path_str)
+    result = model.transcribe(file_path_str)
+    text = result["text"]
+    return keyword_spotting(text)
 
 def transcribe_file(audio: bytes) -> List[str]:
     request = cloud_speech.RecognizeRequest(
