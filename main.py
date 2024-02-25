@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from pydantic import BaseModel
 from pathlib import Path
 
 from speech_to_text import transcribe_file
@@ -7,8 +8,13 @@ app = FastAPI()
 
 BASE_DIR = ""  # 修改为你的文件存储目录的绝对路径
 
-@app.get("/upload")
-def upload_file(file_name: str):
+class UploadFileSchema(BaseModel):
+    file_name: str
+
+@app.post("/upload")
+async def upload_file(request: UploadFileSchema):
+    file_name = request.file_name
+
     if not file_name.endswith('.wav'):
         raise HTTPException(status_code=400, detail="File format not supported. Please upload a .wav file.")
 
