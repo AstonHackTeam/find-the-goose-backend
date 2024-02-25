@@ -11,7 +11,7 @@ project_id = "civil-tube-405901"
 recognition_config = cloud_speech.RecognitionConfig(
     auto_decoding_config=cloud_speech.AutoDetectDecodingConfig(),
     language_codes=["en-US"],
-    model="short",
+    model="long",
 )
 
 def transcribe_file_whisper(file_path)->List[str]:
@@ -30,11 +30,18 @@ def transcribe_file(audio: bytes) -> List[str]:
     response = client.recognize(request=request)
     commands = []
     for result in response.results:
-        commands += keyword_spotting(result.alternatives[0].transcript)
+        text = result.alternatives[0].transcript
+        print(text)
+        text = text.replace("of","up")
+        text = text.replace("dumb", "down").replace("Tom", "down").replace("oh", "up")
+        commands += keyword_spotting(text)
     return commands
 
 
 def keyword_spotting(text: str) -> List[str]:
     keywords = {"up", "down", "left", "right"}
-    found_commands = [keyword for keyword in keywords if keyword in text.lower()]
+    words = text.lower().split()
+    found_commands = [word for word in words if word in keywords]
+    print(found_commands)
     return found_commands
+
